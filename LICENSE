@@ -1,0 +1,78 @@
+QuantumByte for WHMCS — Partner Licence
+
+Copyright (c) 2026 PT Quantum Teknologi Nusantara ("QuantumByte"). All rights reserved.
+
+This repository is public so that partners can download and verify the
+software. Being able to read or download it does not grant you a licence.
+
+1. Who may use it
+
+   You may use this software only if you are a hosting company with an active
+   partnership agreement with QuantumByte (a "Partner"). If you are not a
+   Partner, you have no rights to use, copy, modify or distribute it.
+
+2. What a Partner may do
+
+   While the partnership agreement is in force, a Partner may:
+
+   a. install and run the software on WHMCS installations the Partner
+      operates, to sell and manage QuantumByte services for the Partner's own
+      customers;
+   b. make copies needed for that purpose, including backups, staging and
+      test installations;
+   c. modify the software for that purpose; and
+   d. let its employees and contractors do the above on the Partner's behalf.
+
+3. What a Partner may not do
+
+   a. Distribute, sell, sublicense or publish the software or modified
+      versions of it, except as part of operating its own WHMCS as allowed
+      above.
+   b. Use the software, or any part of it, to connect WHMCS to any service
+      other than QuantumByte.
+   c. Remove or change this licence or any copyright notice.
+   d. Use the software to get around the limits, pricing or terms of the
+      partnership agreement.
+
+4. Customers' apps
+
+   Ending this licence does not stop apps that a Partner's customers have
+   already published from running on infrastructure the Partner controls.
+   It ends the Partner's right to keep using this software.
+
+5. End of the licence
+
+   This licence ends automatically when the partnership agreement ends, or
+   when the Partner breaches it and does not fix the breach within 30 days
+   of written notice. When it ends, the Partner must stop using the software
+   and remove it from its WHMCS installations within 30 days.
+
+6. Ownership
+
+   QuantumByte keeps all rights, title and interest in the software. Any
+   suggestions a Partner sends may be used by QuantumByte without any
+   obligation to the Partner.
+
+7. No warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT,
+   EXCEPT WHERE THE PARTNERSHIP AGREEMENT SAYS OTHERWISE.
+
+8. Limitation of liability
+
+   TO THE EXTENT THE LAW ALLOWS, QUANTUMBYTE IS NOT LIABLE FOR ANY INDIRECT,
+   INCIDENTAL OR CONSEQUENTIAL DAMAGES, OR LOSS OF PROFIT, DATA OR BUSINESS,
+   ARISING FROM THE SOFTWARE. QUANTUMBYTE'S TOTAL LIABILITY UNDER THIS
+   LICENCE IS LIMITED AS SET OUT IN THE PARTNERSHIP AGREEMENT.
+
+9. Partnership agreement
+
+   If this licence and the partnership agreement conflict, the partnership
+   agreement wins.
+
+10. Governing law
+
+   This licence is governed by the laws of the Republic of Indonesia.
+
+Questions: support@quantumbyte.ai
