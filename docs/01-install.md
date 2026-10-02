@@ -120,29 +120,32 @@ your WHMCS root, as the owner of the WHMCS files:
 
 Then go through [Before you start](#before-you-start) yourself.
 
-### Activate the addon and add the server
+### Add the server and the addon
 
-1. Configuration → System Settings → **Addon Modules** → **QuantumByte on
-   VPS** → **Activate**. Under **Configure**, give your admin role access.
-   Activate it even if you don't sell VPS plans: it also hands new cPanel
-   accounts over, connects bought domains, and runs the DNS upkeep on
-   every cron run.
-2. Configuration → System Settings → **Servers** → **Add New Server**:
+1. Configuration → System Settings → **Servers** → **Add New Server**:
    - Module: **QuantumByte**
    - Hostname: `<QB hostname>`
    - Password: `<API key>`
-3. Press **Test Connection**. Expect "Connection successful".
-4. Name it (e.g. `QuantumByte`), **Save Changes**.
-5. Put the server in its own server group (**Create New Group**).
+2. Press **Test Connection**. Expect "Connection successful".
+3. Name it (e.g. `QuantumByte`), **Save Changes**.
+4. Put the server in its own server group (**Create New Group**).
+5. Only if you sell VPS plans, or want registrars to take DNS records:
+   Configuration → System Settings → **Addon Modules** → **QuantumByte on
+   VPS** → **Activate**. Under **Configure**, give your admin role access.
 
 **Things to note**
 
 - The module always uses HTTPS, whatever the server's "Secure" box says.
 - The API key is stored encrypted by WHMCS and scrubbed from the Module
   Log.
-- The addon calls QuantumByte through the server entry of the customer's
-  AI Builder service, or the lowest-ID enabled QuantumByte server when the
-  customer has none. One QuantumByte server per WHMCS is the simple setup.
+- The module calls QuantumByte about a customer through the server entry
+  of their AI Builder service, or the lowest-ID enabled QuantumByte server
+  when they have none. One QuantumByte server per WHMCS is the simple
+  setup.
+- DNS upkeep, connecting bought domains, and handing cPanel accounts over
+  run from the module's own `hooks.php`. WHMCS starts loading it when you
+  save the AI Builder product's Module Settings ([Create the
+  product](#create-the-product)).
 
 ## Create the product
 
@@ -213,4 +216,5 @@ Then go through [Before you start](#before-you-start) yourself.
   cancel) and **Contact support**. Each signs the customer into your client
   area through a single sign-on credential named "QuantumByte" under the
   service's OAuth credentials. The module makes it on Create and on Open AI
-  Builder, and deletes it on Terminate.
+  Builder, and deletes it on Terminate. Don't edit it; delete it instead,
+  and the next Open AI Builder makes a new one.

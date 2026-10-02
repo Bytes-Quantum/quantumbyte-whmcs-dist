@@ -10,10 +10,11 @@ The module has two parts:
 - **QuantumByte** (`modules/servers/quantumbyte/`): a provisioning module.
   When a customer's invoice is paid, WHMCS creates a QuantumByte account
   loaded with the product's credits. The customer opens it from the client
-  area with **Open AI Builder**, without a password.
+  area with **Open AI Builder**, without a password. It also hands cPanel
+  accounts to QuantumByte and keeps your customers' DNS records in step.
 - **QuantumByte on VPS** (`modules/addons/quantumbyte_vps/`): an addon that
-  hands VPSes and cPanel accounts to QuantumByte and keeps your customers'
-  DNS records in step. Activate it even if you sell no VPS plans.
+  hands VPSes to QuantumByte and installs its app server on them. Activate
+  it if you sell VPS plans, or to let registrars take DNS records.
 
 ## Read in this order
 

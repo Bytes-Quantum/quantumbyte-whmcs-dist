@@ -128,9 +128,10 @@ MongoDB server you run.
      Hostname is empty).
    - WHM credentials: a WHM API token in **Access Hash** (or the root
      password).
-2. The addon **QuantumByte on VPS** active
-   ([Activate the addon](01-install.md#activate-the-addon-and-add-the-server)).
-   It hands a new cPanel account to QuantumByte as soon as WHMCS creates it.
+2. The AI Builder product saved with this module
+   ([Create the product](01-install.md#create-the-product)). The module
+   then hands a new cPanel account to QuantumByte as soon as WHMCS creates
+   it.
 3. Your MongoDB server connected on your partner portal
    ([below](#your-database-for-cpanel-apps)).
 4. The AI Builder product: **Publish to: cPanel**.

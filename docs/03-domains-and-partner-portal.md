@@ -16,11 +16,14 @@ Where the module writes the DNS record for them:
 
 1. **Your cPanel server**: the customer has an active cPanel account at
    you whose domain is the zone. Written through WHM's zone API with the
-   server's own credentials. Nothing to configure.
+   server's own credentials, always over HTTPS with TLS verified (port
+   2086 becomes 2087), whatever the server's "Secure" box says. Nothing
+   to configure.
 2. **The registrar**: the domain has DNS Management on, and its registrar
    is listed in Configuration → System Settings → Addon Modules →
    QuantumByte on VPS → Configure → **Registrars that may take DNS
-   records** (module names, comma separated; empty by default).
+   records** (module names, comma separated; empty by default; the addon
+   must be active).
 3. **Anywhere else** (DNS Management off, a registrar not listed, DNS
    hosted elsewhere): the customer is shown the record to create by hand.
    The app goes live when it's found.
@@ -41,10 +44,9 @@ Where the module writes the DNS record for them:
 - **Disconnect** removes the module's records and puts back what they
   replaced. A record that was already there is left.
 - Records follow the app: rewritten when it moves, removed when it's
-  deleted. This runs on
-  every cron run and when the customer opens the service page, so DNS
-  follows a move within one cron run. A run where nothing moved writes
-  nothing. Terminating one service removes no records: the customer's
+  deleted. The cron checks each customer at most once every 30 minutes,
+  so DNS follows a move within about 30 minutes; opening the service page
+  changes no records. A check where nothing moved writes nothing. Terminating one service removes no records: the customer's
   other services share the same apps. Records go when the customer's
   QuantumByte account is deleted, 30 days after their last service ends.
 - If the domain's nameservers aren't your cPanel server's, the record is

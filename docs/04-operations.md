@@ -39,6 +39,12 @@ Download the newer installer, check its sha256, and run it as in
 It backs up the folders it replaces. Settings live in WHMCS's database, so
 nothing needs re-entering.
 
+Coming from a version without `modules/servers/quantumbyte/hooks.php`:
+DNS upkeep, bought domains and cPanel hand-over keep running while the
+QuantumByte on VPS addon is active. Before you deactivate it, open an AI
+Builder product → **Module Settings** → **Save Changes** once, so WHMCS
+loads the module's own hooks.
+
 To go back to a backup, run this as the owner of the WHMCS files, with a
 backup from `~/quantumbyte-whmcs-backups/` (named by date and time). The
 installer prints this line, filled in, at the end of each install:
