@@ -205,5 +205,9 @@ on it through WHM, with the credentials WHMCS holds for that server.
 - The module reaches cPanel on your WHM port minus 4 (2087 → 2083).
 - The account used is the customer's newest active cPanel service. A
   customer without one is refused Publish until it's set up.
+- A customer with more than one cPanel service has a separate token on
+  each cPanel account. An app already published on an earlier account can
+  still be republished, taken offline or deleted there, and that account's
+  token is renewed and revoked on its own.
 - One app per cPanel account.
 - A slow cPanel server never blocks sign-in (it waits 10 seconds at most).
