@@ -193,6 +193,8 @@ on it through WHM, with the credentials WHMCS holds for that server.
 - Sent to QuantumByte when the AI Builder service is created, upgraded or
   renewed, on **Open AI Builder**, and right away when WHMCS creates a
   cPanel account for a customer whose AI Builder publishes to cPanel.
+  The WHMCS cron also sends it for any account QuantumByte holds no token
+  for (after a paused partnership resumes), with no action by the customer.
 - Revoked when the cPanel service is terminated, which also tells
   QuantumByte to stop publishing there.
 - Kept when the AI Builder service is terminated: QuantumByte uses it to

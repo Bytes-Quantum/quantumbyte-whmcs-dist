@@ -159,5 +159,7 @@ are deleted, and each VPS agent switches itself off and leaves the app, its
 data and its backups running. From then on QuantumByte holds, suspends and
 deletes nothing on your side, whatever happens to a service in WHMCS. If
 the partnership resumes, connect the cluster and the database again; the
-cPanel tokens are sent again on the next Open AI Builder, and the addon
-installs the agent again on each VPS without touching the app.
+WHMCS cron sends every cPanel account's token again within a run or two,
+suspended and terminated customers included, and the addon installs the
+agent again on each VPS without touching the app. A suspension or
+termination made in WHMCS meanwhile is then applied to the app.
