@@ -3,7 +3,8 @@
 1. [Before you start](#before-you-start)
 2. [Install the module and add the server](#install-the-module-and-add-the-server)
 3. [Create the product](#create-the-product)
-4. [Test an order end to end](#test-an-order-end-to-end)
+4. [Sell extra credits (credit packs)](#sell-extra-credits-credit-packs)
+5. [Test an order end to end](#test-an-order-end-to-end)
 
 ## Before you start
 
@@ -162,6 +163,8 @@ Then go through [Before you start](#before-you-start) yourself.
      - **Our Kubernetes**: your cluster ([Publish to your Kubernetes](02-publishing.md#publish-to-your-kubernetes))
      - **The client's VPS**: a VPS you sell them ([Publish to your customers' VPS](02-publishing.md#publish-to-your-customers-vps))
      - **cPanel**: their cPanel account at you ([Publish to cPanel](02-publishing.md#publish-to-cpanel))
+   - **Product kind**: **AI Builder plan**. For extra credits, see
+     [Sell extra credits](#sell-extra-credits-credit-packs).
    - Choose **Automatically setup the product as soon as the first payment
      is received**.
 3. **Save Changes**. Set **Pricing** as for any product.
@@ -185,6 +188,45 @@ Then go through [Before you start](#before-you-start) yourself.
   product *addon* is not supported.
 - Credits roll over; unused credits never expire.
 
+## Sell extra credits (credit packs)
+
+A credit pack is a product your customer buys once, just for credits. Once
+its invoice is paid, the credits go into the AI Builder account the customer
+already has. It adds no app and no plan, and it never renews. QuantumByte
+charges you for the credits at your usual price per credit; the partner
+portal's ledger names the pack.
+
+1. Create a product as in [Create the product](#create-the-product), named
+   for what it gives (e.g. `AI Builder credits 1000`), in the **same server
+   group** as your AI Builder plans.
+2. **Module Settings** tab:
+   - **Credits**: the credits one pack adds.
+   - **Product kind**: **Credit pack**. **Publish to** is ignored.
+   - Choose **Automatically setup the product as soon as the first payment
+     is received**.
+3. **Pricing** tab: payment type **One Time**.
+4. Leave it out of every plan's **Upgrades** tab.
+
+**Things to note**
+
+- Only customers with an active or suspended AI Builder plan can check out
+  a credit pack. A new customer orders the plan first, and the pack once the
+  plan is active.
+- With **Allow Multiple Quantities** on, a customer buying 3 packs gets 3
+  times the Credits.
+- Bought credits behave like all others: they never expire, and they stay
+  in the account when a plan is terminated.
+- Suspending, unsuspending or terminating a credit pack service changes
+  nothing at QuantumByte.
+- A credit pack that QuantumByte refuses (the customer has no AI Builder
+  account, or every plan of theirs is terminated) lands in the Module Queue,
+  with nothing charged to you. Retry once the customer has a plan, or refund
+  the invoice. Orders you add in the admin area skip the checkout check, so
+  this is where they stop.
+- A credit pack product saved with a recurring payment type is refused at
+  Create, before any credits load: switch it to **One Time** and press
+  **Create**.
+
 ## Test an order end to end
 
 1. In your store, as a test customer, order the AI Builder product and
@@ -204,6 +246,13 @@ Then go through [Before you start](#before-you-start) yourself.
 
 - Record payment with **Add Payment**. Setting an invoice's status to Paid
   by hand runs no module call, so no account and no credits.
+- An order you add yourself (Orders → **Add New Order**): leave **Order
+  Status** at **Pending**, then **Add Payment**. An order added as
+  **Active** switches the service on without calling QuantumByte, so the
+  customer has no account. The module checks once a day and on the
+  service's admin page: such a service shows a warning, is listed on the
+  admin dashboard, and gets one line in the Activity Log. Press **Create**
+  under Module Commands to set it up.
 - A failed create lands in Utilities → **Module Queue**. Retrying is safe:
   QuantumByte returns what the first call made.
 - A customer whose email already has a QuantumByte account is refused:

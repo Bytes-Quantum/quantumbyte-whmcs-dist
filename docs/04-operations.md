@@ -16,8 +16,10 @@ Run these from the AI Builder service's **Module Commands** as usual.
 | **Terminate** | Once *every* AI Builder service of the customer is terminated: account closed, apps answer "This site is no longer available" (HTTP 404). 30 days later everything is deleted, including the app, its data and backups on your cluster, their VPS or their cPanel account, and the app's database on your MongoDB. |
 | **Create** on a terminated service | Within those 30 days: restores the account as it was. No credits granted or charged again. After that, order a new service. |
 | **Renewal paid** | The product's Credits load again. A renewal that failed (e.g. your balance ran out) is caught up by the next successful one, or by retrying it in the Module Queue. |
-| **Upgrade** | The extra credits load for what's left of the billing period, as WHMCS prorates it. |
+| **Upgrade** | Once its invoice is paid, the extra credits load for what's left of the billing period, as WHMCS prorates it. Each paid upgrade invoice loads once, even after a downgrade in the same period. |
 | **Downgrade** | Nothing taken back; the smaller package applies from the next renewal. |
+| **Change Package** with no paid upgrade invoice | The package changes; no credits load. To give a customer a bigger package for free, raise an upgrade invoice and mark it paid: the paid invoice is what loads the credits. |
+| **Credit pack paid** | Its credits load into the customer's account once, however often Create runs. No app, no plan. Suspend, Unsuspend and Terminate on it change nothing; Renew and Change Package are refused. |
 
 The other services:
 
@@ -72,7 +74,8 @@ the shared storage if the nodes share the WHMCS folder.
 ## Limits to know
 
 - One QuantumByte account per WHMCS client: a second service loads its
-  credits into the same account.
+  credits into the same account. To sell credits without a second plan,
+  use a [credit pack](01-install.md#sell-extra-credits-credit-packs).
 - A customer email that already has a QuantumByte account is refused.
 - Customers sign in only through you. QuantumByte's own password, Google
   and email sign-in refuse them.
@@ -95,7 +98,14 @@ the shared storage if the nodes share the WHMCS folder.
 - **Configuration → System Logs → Module Log**: every call to QuantumByte,
   with the API key, sign-in links, install commands and cPanel tokens
   scrubbed. Turn module logging on while you debug.
-- **Activity Log**: VPS hand-over, cPanel tokens and domain upkeep.
+- **Activity Log**: VPS hand-over, cPanel tokens, domain upkeep, and AI
+  Builder services that are Active with no QuantumByte account (one line
+  each). A cron check that keeps failing (a refused key, QuantumByte
+  unreachable) is logged once per server entry, and once more when it works
+  again.
+- **Admin dashboard**: names each QuantumByte server entry whose checks keep
+  failing, until they work again, and lists AI Builder services that are
+  Active with no QuantumByte account.
 - **Addons → QuantumByte on VPS**: each VPS's status, last install error
   and SSH host key.
 - Partner portal: balance, statements, **Customer apps**, and the problems
@@ -106,7 +116,8 @@ the shared storage if the nodes share the WHMCS folder.
 | Message | Fix |
 | --- | --- |
 | Test Connection "Set Configuration → System Settings → General Settings → System URL to https://…" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
-| Test Connection "Unauthorized" | Wrong or replaced API key. Check with QuantumByte. |
+| Test Connection "QuantumByte refused this API key…" | Wrong or replaced API key. Check with QuantumByte. Don't save the entry with it: a saved entry is used. |
+| "server entry #N …: QuantumByte refused this entry's API key" | Fix the key on that entry, or switch it off (Disable). |
 | "QuantumByte has paused this partnership. Contact QuantumByte." | Contact QuantumByte. |
 | "Not enough QuantumByte balance…" / "…credit…" | Top up or pay what you owe, then Retry. |
 | "Your QuantumByte statement for … was due on …" | Pay the statement in the partner portal, then Retry. |
@@ -114,6 +125,7 @@ the shared storage if the nodes share the WHMCS folder.
 | "app_link.token_url must be https://<your WHMCS>/oauth/token.php" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
 | "… already has a QuantumByte account. Ask the customer to use another email address for this service." | The customer uses another email for this service. |
 | "…hasn't finished setting up publishing for your plan" | Connect your cluster or your cPanel database ([Publishing](02-publishing.md)). |
+| "AI Builder service #N is Active, but has no live QuantumByte account" (Activity Log, service page, dashboard) | The order was added as Active, or the service was set Active by hand. Press **Create** under Module Commands. |
 | "…is still setting up your server" | The VPS install hasn't finished: see the addon page. |
 | "The VPS's SSH host key changed…" | Rebuilt VPS: **Forget host key** on the addon page. |
 | "…already has a website on <domain>" | Empty the cPanel account's `public_html` and remove other Application Manager apps. |

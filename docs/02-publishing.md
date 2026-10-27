@@ -80,8 +80,9 @@ Your own VPS module creates the machine as usual; the addon hands it over.
 2. Each VPS product must deliver:
    - Ubuntu, amd64, 1 GB memory or more
    - ports 80 and 443 free
-   - a domain on the service (the order's domain), pointed at the VPS by
-     your DNS
+   - a domain on the service (the order's domain or hostname field). The
+     customer's app is published at exactly that name. See
+     [The VPS's domain](#the-vpss-domain).
    - root login with the password WHMCS holds for the service
 3. NAT VPS: add a product custom field named **SSH Port**.
 4. The AI Builder product for these customers: **Publish to: The client's
@@ -114,6 +115,34 @@ Progress and install errors show on the addon's page: **Addons** →
 - QuantumByte's agent on the VPS runs as root and updates itself from
   QuantumByte. It only connects outwards, once a minute. The app, its
   database, its certificates and a nightly backup all stay on the VPS.
+
+### The VPS's domain
+
+The app opens at the VPS service's domain once that name points at the
+VPS's address (the service's dedicated IP). The addon does this for the
+customer when it can. Once the VPS is registered, on every cron run:
+
+- **The name is one of the customer's active domains at you**, or a name
+  under one: `example.id`, or `server1.example.id` under `example.id`. The
+  record goes in that domain the same way as for
+  [connected domains](03-domains-and-partner-portal.md#domains): your
+  cPanel server's zone, or the registrar if it's listed under
+  **Registrars that may take DNS records**. It's an A record, or AAAA for
+  an IPv6 address.
+- **Nothing the customer has is replaced.** The one exception is a domain
+  bought in the same order as the VPS. There, an A, AAAA or CNAME already
+  at that name (usually the registrar's parking page) gives way.
+- **Done once.** A new address moves the record. When the VPS is
+  terminated, the record comes out and anything it replaced goes back.
+- **Otherwise** (another registrar, DNS Management off, the domain not
+  bought here, a record in the way): nothing is written. The Activity Log
+  says why, once. The customer's VPS page shows the record to create:
+  name, type and value. The addon looks again every 30 minutes, so
+  turning DNS Management on or listing the registrar later still works.
+
+The order's domain field is the app's address, so a hostname like
+`server1.example.id` publishes the app there, not on `example.id`. To
+publish on the bought domain itself, enter that domain in the field.
 
 ## Publish to cPanel
 
