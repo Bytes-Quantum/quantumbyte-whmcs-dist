@@ -53,6 +53,11 @@ Where the module writes the DNS record for them:
   still written there and the customer is warned visitors won't find the
   app until they are.
 - Customers need the **managedomains** permission (owners have it).
+- A domain bought elsewhere isn't in WHMCS, so it can't be connected here.
+  Under the form, each app links to its **Custom domains** in AI Builder,
+  signed in: the customer adds the domain there and creates the record it
+  shows at their registrar. cPanel apps say to add domains in the hosting
+  account instead.
 
 ## Your partner portal
 
