@@ -11,12 +11,11 @@
 **Your WHMCS needs:**
 
 1. WHMCS 8 or later. Proven on WHMCS 9.0.8 with PHP 8.3.
-2. PHP with curl. The VPS part of the addon also uses the phpseclib that
-   WHMCS bundles.
+2. PHP with curl.
 3. **System URL** (Configuration → System Settings → General Settings)
    set to your real public address, starting with `https://`.
 4. `https://whmcs.example.com/oauth/token.php` reachable from the internet.
-5. The WHMCS cron running. WHMCS recommends every 5 minutes. VPS installs
+5. The WHMCS cron running. WHMCS recommends every 5 minutes. VPS hand-over
    and domain upkeep run from it.
 6. Outbound HTTPS (443) from WHMCS to `<QB hostname>`.
 7. At least one payment gateway active, so customers can order.
@@ -24,17 +23,21 @@
 The installer's `--check` tests all of these except point 4 (see
 [below](#install-with-the-installer-script)).
 
-**QuantumByte gives you** (there is no sign-up form; QuantumByte sets up
-your partner account with you):
+**QuantumByte gives you** (there is no public sign-up form; QuantumByte sets
+up your partner account with you):
 
-- A **hostname** and an **API key** for WHMCS. The key is shown once. If
-  it's lost, QuantumByte issues a new one and the old one stops working at
-  once.
+- An **invite link** for your **partner portal**. Open it, type your email,
+  and you are signed in. It works once, for 7 days. After that, sign in with
+  a link QuantumByte emails you, or with Google.
 - **Terms**: your currency, and whether you pay ahead (**Prepaid**: top up
   first) or monthly (**Postpaid**, up to a credit limit).
-- A sign-in for your team's **partner portal** (email and first password).
 - The **installer** download link and its **sha256** checksum. Your
   partner portal shows the checksum too.
+
+**You create in the partner portal** the **hostname** and an **API key** for
+WHMCS, under **Setup** → **API keys** → **Create key**. The portal asks for
+your authenticator code first. The key is shown once. If it's lost, create a
+new one and stop the old one; a stopped key is refused at once.
 
 **Things to note**
 

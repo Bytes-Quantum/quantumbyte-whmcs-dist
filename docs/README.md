@@ -13,8 +13,9 @@ The module has two parts:
   area with **Open AI Builder**, without a password. It also hands cPanel
   accounts to QuantumByte and keeps your customers' DNS records in step.
 - **QuantumByte on VPS** (`modules/addons/quantumbyte_vps/`): an addon that
-  hands VPSes to QuantumByte and installs its app server on them. Activate
-  it if you sell VPS plans, or to let registrars take DNS records.
+  hands VPSes to QuantumByte and points their domains at them. Your
+  customers connect their VPSes themselves, from QuantumByte. Activate it if
+  you sell VPS plans, or to let registrars take DNS records.
 
 ## Read in this order
 
@@ -26,6 +27,8 @@ The module has two parts:
    customers' own domains, and your team's page at QuantumByte.
 4. [Operations](04-operations.md): suspend, terminate, upgrade, updating
    the module, limits, troubleshooting, what runs without QuantumByte.
+5. [Upgrading to 1.1](05-upgrade-1.1.md): customers now connect their own
+   VPS; what changes for you and them.
 
 ## Placeholders
 
@@ -33,8 +36,8 @@ The module has two parts:
 | --- | --- |
 | `whmcs.example.com` | Your WHMCS. |
 | `/var/www/whmcs` | Your WHMCS root folder (the one holding `init.php`). |
-| `<QB hostname>` | QuantumByte's API hostname, given to you by QuantumByte. |
-| `<API key>` | Your API key, given to you by QuantumByte. |
+| `<QB hostname>` | QuantumByte's API hostname, shown when you create an API key in your partner portal. |
+| `<API key>` | Your API key, created in your partner portal under **Setup** → **API keys**. |
 | `apps.example.com` | A domain of yours that customers' apps go under. |
 
 ## Help

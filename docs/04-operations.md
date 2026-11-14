@@ -11,9 +11,9 @@ Run these from the AI Builder service's **Module Commands** as usual.
 
 | WHMCS action | What happens |
 | --- | --- |
-| **Suspend** | Once *every* AI Builder service of the customer is suspended: sign-in refused; their apps answer "This site is temporarily unavailable" (HTTP 503) on every target (your Kubernetes, their VPS, their cPanel). Data is kept. |
-| **Unsuspend** | Sign-in and apps come back as they were. |
-| **Terminate** | Once *every* AI Builder service of the customer is terminated: account closed, apps answer "This site is no longer available" (HTTP 404). 30 days later everything is deleted, including the app, its data and backups on your cluster, their VPS or their cPanel account, and the app's database on your MongoDB. |
+| **Suspend** | The plan stops publishing. What else stops depends on the customer's plans: see [Suspend and terminate by plan](#suspend-and-terminate-by-plan). Data is kept. |
+| **Unsuspend** | Publishing, sign-in and apps come back as they were. |
+| **Terminate** | Once *every* AI Builder service of the customer is terminated, the account is closed and its data deleted 30 days later. An app on a VPS is never stopped or deleted: see [Suspend and terminate by plan](#suspend-and-terminate-by-plan). |
 | **Create** on a terminated service | Within those 30 days: restores the account as it was. No credits granted or charged again. After that, order a new service. |
 | **Renewal paid** | The product's Credits load again. A renewal that failed (e.g. your balance ran out) is caught up by the next successful one, or by retrying it in the Module Queue. |
 | **Upgrade** | Once its invoice is paid, the extra credits load for what's left of the billing period, as WHMCS prorates it. Each paid upgrade invoice loads once, even after a downgrade in the same period. |
@@ -25,7 +25,8 @@ The other services:
 
 - **Terminate the VPS service**: QuantumByte stops using it; the customer's
   app there is not moved anywhere. Suspending the VPS is not passed on:
-  QuantumByte just sees it offline.
+  QuantumByte still shows it connected; a publish waits until the VPS runs
+  it again.
 - **Terminate the cPanel service**: WHMCS's cPanel module deletes the
   account; QuantumByte stops publishing there and the module revokes its
   token. Suspending the cPanel service takes the site down with the
@@ -33,6 +34,42 @@ The other services:
 - **Terminate the AI Builder service** of a cPanel customer: the cPanel
   token stays with QuantumByte until the purge 30 days later, which
   deletes the app from the account and then revokes the token.
+
+### Suspend and terminate by plan
+
+"Kubernetes and cPanel plans" below also covers a plan whose **Publish to**
+is not set yet.
+
+**A suspended VPS plan.** Publishing from that plan is refused with
+"Publishing is paused. Ask `<you>` about your plan." This holds even while
+another plan of the customer is active. The app on the customer's VPS keeps
+running: QuantumByte never stops or deletes anything on their server.
+
+**Suspended, every plan on a VPS.** When no plan is active and every plan
+of the customer publishes to a VPS, the customer keeps signing in and
+building. WHMCS hides its own sign-in on a suspended service, so their
+service page shows an **Open AI Builder** button instead. AI work still
+stops once their credits run out.
+
+**Suspended Kubernetes and cPanel plans.** When no plan is active, sign-in
+is refused. Their apps on your Kubernetes or in their cPanel account answer
+"This site is temporarily unavailable" (HTTP 503).
+
+**Several plans.** While any plan is active, the customer keeps signing in;
+each suspended plan only stops publishing, as above. When none is active and
+the customer has a Kubernetes or cPanel plan, suspended or terminated, the
+Kubernetes and cPanel rules apply to the whole account. Their app on a VPS
+still keeps running.
+
+**Terminated.** Once every plan is terminated, the account is closed and
+sign-in refused. Apps on your Kubernetes or in their cPanel account answer
+"This site is no longer available" (HTTP 404). 30 days later QuantumByte
+deletes its own data for the account, the app, its data and backups on your
+cluster or in their cPanel account, and the app's database on your MongoDB.
+On a VPS nothing is stopped or deleted: the app, its data and backups stay,
+and QuantumByte's agent there stops checking in. One exception: a VPS app
+that was already on the "unavailable" page before this release can keep
+showing it after the agent stops, until a later agent update.
 
 ### Updating the module
 
@@ -79,15 +116,18 @@ the shared storage if the nodes share the WHMCS folder.
 - A customer email that already has a QuantumByte account is refused.
 - Customers sign in only through you. QuantumByte's own password, Google
   and email sign-in refuse them.
-- VPS and cPanel: one app per VPS, one app per cPanel account.
+- VPS and cPanel: one app per VPS (a customer may have several), one app
+  per cPanel account.
 - Your Kubernetes: customers' own domains take names like `www`, never the
   bare domain (`@`).
 - cPanel: no custom domains through QuantumByte. The app runs on the
   account's main domain; other domains are managed in the hosting account.
-- VPS: backups stay on the VPS (none leave it). On a 1 GB VPS an update
-  leaves the app unanswered for about 4 seconds.
+- VPS: backups stay on the VPS (none leave it). A normal update has no gap:
+  visitors stay on the old version until the new one is ready.
 - Up to 5 domains per app.
-- Credits don't block building or publishing yet.
+- A customer with less than 1 credit left can't start AI work (chat,
+  retries, build approvals, blueprint edits) until credits are added.
+  Publishing uses no credits.
 
 ## Troubleshooting
 
@@ -96,8 +136,7 @@ the shared storage if the nodes share the WHMCS folder.
 - **Utilities → Module Queue**: failed creates, renewals, upgrades, with
   QuantumByte's message. Fix the cause, then **Retry** (always safe).
 - **Configuration → System Logs → Module Log**: every call to QuantumByte,
-  with the API key, sign-in links, install commands and cPanel tokens
-  scrubbed. Turn module logging on while you debug.
+  with the API key, sign-in links and cPanel tokens scrubbed. Turn module logging on while you debug.
 - **Activity Log**: VPS hand-over, cPanel tokens, domain upkeep, and AI
   Builder services that are Active with no QuantumByte account (one line
   each). A cron check that keeps failing (a refused key, QuantumByte
@@ -106,8 +145,9 @@ the shared storage if the nodes share the WHMCS folder.
 - **Admin dashboard**: names each QuantumByte server entry whose checks keep
   failing, until they work again, and lists AI Builder services that are
   Active with no QuantumByte account.
-- **Addons → QuantumByte on VPS**: each VPS's status, last install error
-  and SSH host key.
+- **Addons → QuantumByte on VPS**: each VPS as QuantumByte sees it:
+  connected or waiting for the customer to connect it, when it was last
+  seen, its last release and the release it runs.
 - Partner portal: balance, statements, **Customer apps**, and the problems
   the Kubernetes and database cards show.
 
@@ -116,7 +156,7 @@ the shared storage if the nodes share the WHMCS folder.
 | Message | Fix |
 | --- | --- |
 | Test Connection "Set Configuration → System Settings → General Settings → System URL to https://…" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
-| Test Connection "QuantumByte refused this API key…" | Wrong or replaced API key. Check with QuantumByte. Don't save the entry with it: a saved entry is used. |
+| Test Connection "QuantumByte refused this API key…" | Wrong or stopped API key. Check **Setup** → **API keys** in your partner portal. Don't save the entry with it: a saved entry is used. |
 | "server entry #N …: QuantumByte refused this entry's API key" | Fix the key on that entry, or switch it off (Disable). |
 | "QuantumByte has paused this partnership. Contact QuantumByte." | Contact QuantumByte. |
 | "Not enough QuantumByte balance…" / "…credit…" | Top up or pay what you owe, then Retry. |
@@ -126,8 +166,9 @@ the shared storage if the nodes share the WHMCS folder.
 | "… already has a QuantumByte account. Ask the customer to use another email address for this service." | The customer uses another email for this service. |
 | "…hasn't finished setting up publishing for your plan" | Connect your cluster or your cPanel database ([Publishing](02-publishing.md)). |
 | "AI Builder service #N is Active, but has no live QuantumByte account" (Activity Log, service page, dashboard) | The order was added as Active, or the service was set Active by hand. Press **Create** under Module Commands. |
-| "…is still setting up your server" | The VPS install hasn't finished: see the addon page. |
-| "The VPS's SSH host key changed…" | Rebuilt VPS: **Forget host key** on the addon page. |
+| "Connect your server first." (the customer, at Publish) | The customer hasn't connected their VPS: they press **Connect this server in QuantumByte** on the VPS's page and run the command it shows ([Publishing](02-publishing.md#publish-to-your-customers-vps)). |
+| "…is still setting up your server" | The VPS has no domain yet: set the domain on the VPS service. |
+| "Customers now connect their own server in QuantumByte. Update the QuantumByte VPS addon to 1.1.0." | Your addon is older than 1.1.0: [update the module](05-upgrade-1.1.md). |
 | "…already has a website on <domain>" | Empty the cPanel account's `public_html` and remove other Application Manager apps. |
 | "Missing rights in <namespace>: …" | Run the setup commands again, then **Check again**. |
 | "This app already has the maximum of 5 domains" | Disconnect a domain first. |
@@ -148,7 +189,6 @@ in place."
 | WHMCS version | "… is too old" below 8.0 (FAIL); another version than the tested 9.0.8 (WARN). | Upgrade WHMCS, or go ahead on the WARN. |
 | PHP version | "… is too old" below 7.4 (FAIL); "… but your WHMCS cron last ran on PHP …" (WARN); 7.4 to 8.2, untested (WARN). | Pass the cron's PHP with `--php`; PHP 8.3 is tested. |
 | curl | PHP's curl isn't loaded, or has no TLS support (FAIL). | Enable PHP's curl extension with SSL. |
-| phpseclib | "phpseclib\Net\SSH2 isn't available" (WARN). | Needed only for VPS plans. |
 | System URL | Not set, not `https`, or an IP, `localhost` or a port (WARN). | Set it to your public `https://` address before selling: Test Connection fails without it. |
 | Cron | Never ran, last run in the future, or "last ran … minutes ago" (WARN). | Run the WHMCS cron every 5 minutes; check the server clock. |
 | Payment gateway | "No payment gateway is active" (WARN). | Activate one, so customers can order. |
@@ -172,6 +212,8 @@ data and its backups running. From then on QuantumByte holds, suspends and
 deletes nothing on your side, whatever happens to a service in WHMCS. If
 the partnership resumes, connect the cluster and the database again; the
 WHMCS cron sends every cPanel account's token again within a run or two,
-suspended and terminated customers included, and the addon installs the
-agent again on each VPS without touching the app. A suspension or
-termination made in WHMCS meanwhile is then applied to the app.
+suspended and terminated customers included. Each VPS customer runs the
+install command again to connect their server. This does not touch the
+app. A suspension or termination made in WHMCS meanwhile is then applied
+to apps on your Kubernetes and in cPanel accounts. An app on a VPS is never
+stopped or deleted. The server belongs to the customer.

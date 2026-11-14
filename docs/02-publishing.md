@@ -5,8 +5,9 @@ live. Your customer never chooses; they press **Publish** and see the live
 address.
 
 Until the place you chose is ready (no cluster connected, no database
-connected, VPS still installing), Publish is refused with a message naming
-you. No app ever runs on QuantumByte's own servers instead.
+connected), Publish is refused with a message naming you. A VPS the
+customer has not connected yet gets "Connect your server first." instead.
+No app ever runs on QuantumByte's own servers instead.
 
 1. [Publish to your Kubernetes](#publish-to-your-kubernetes)
 2. [Publish to your customers' VPS](#publish-to-your-customers-vps)
@@ -72,46 +73,68 @@ Each app then lives at `<app>.apps.example.com`.
 
 ## Publish to your customers' VPS
 
-Your own VPS module creates the machine as usual; the addon hands it over.
+Your own VPS module creates the machine as usual. The addon hands it to
+QuantumByte, and the customer connects it themselves. Neither the addon nor
+QuantumByte ever logs in to the VPS or uses its root password.
 
 1. Configuration → System Settings → Addon Modules → **QuantumByte on VPS**
    → **Configure** → **VPS products**: the product IDs of your VPS plans,
    comma separated → Save.
 2. Each VPS product must deliver:
-   - Ubuntu, amd64, 1 GB memory or more
-   - ports 80 and 443 free
+   - Ubuntu on amd64 (x86-64), with a CPU that has AVX (MongoDB 7 needs it)
+   - 2 GB of memory or more
+   - nothing listening on ports 80, 443 or 8080 (except a VPS connected
+     again after QuantumByte re-enables you as a hoster; its app keeps
+     running)
    - a domain on the service (the order's domain or hostname field). The
      customer's app is published at exactly that name. See
      [The VPS's domain](#the-vpss-domain).
-   - root login with the password WHMCS holds for the service
-3. NAT VPS: add a product custom field named **SSH Port**.
-4. The AI Builder product for these customers: **Publish to: The client's
+   - a way for the customer to sign in to it and use `sudo` (the root
+     password you hand them, or an SSH key). They may change it whenever
+     they like.
+3. The AI Builder product for these customers: **Publish to: The client's
    VPS**.
 
 What happens after a VPS order is paid:
 
 1. Your VPS module creates the VPS. The addon registers it on the
-   customer's QuantumByte account.
-2. On the next cron run, the addon connects over SSH as root, with the
-   password WHMCS holds, and starts QuantumByte's installer. It installs up
-   to 3 VPSes per cron run, one install at a time per VPS. A VPS still
-   booting is tried again on the next run.
-3. Once installed, the customer's next Publish goes there, at the VPS
-   service's domain, with a Let's Encrypt certificate on the VPS.
+   customer's QuantumByte account and points its domain at it.
+2. The customer opens the VPS's page in your client area and presses
+   **Connect this server in QuantumByte**. It signs them in to QuantumByte
+   on that server's **Connect your server** page.
+3. They press **Get the install command**. QuantumByte asks for their
+   two-step sign-in code; a customer who has not set two-step sign-in up is
+   taken through setting it up first.
+4. The page shows one install command. The customer signs in to the VPS,
+   pastes the command and runs it. They can use it once, within 1 hour. The
+   page changes to **Connected** a few seconds after the install finishes.
+5. The customer's next Publish goes there, at the VPS service's domain,
+   with a Let's Encrypt certificate on the VPS. Until the VPS is connected,
+   Publish says "Connect your server first." and links to that page.
 
-Progress and install errors show on the addon's page: **Addons** →
-**QuantumByte on VPS**.
+The addon's page (**Addons** → **QuantumByte on VPS**) shows each VPS
+as QuantumByte sees it: connected or waiting for the customer, when it was
+last seen, and its last release. Use it to answer customers. A ready reply
+for "How do I connect my server?" is in
+[Upgrading to 1.1](05-upgrade-1.1.md#a-reply-for-your-support-team).
 
 **Things to note**
 
-- The root password never leaves WHMCS.
+- Nobody but the customer uses the VPS's root password. The customer can
+  reset it whenever they like; a connected VPS keeps working.
 - The customer needs an AI Builder service too. Without one, the VPS
-  waits, is retried every 30 minutes, and the Activity Log says so.
-- The first SSH host key a VPS shows is kept. A rebuilt VPS shows a new
-  key and is refused (the password is not sent): press **Forget host key**
-  on the addon's page, and the next cron run trusts the new key.
-- One app per VPS. A second app is refused with "Your plan publishes one
-  app. Ask <you> for another."
+  waits, is retried every 30 minutes, and the Activity Log says so. The
+  **Connect** link shows once they have one.
+- A rebuilt or reinstalled VPS: the customer presses **Reconnect this
+  server** on the same page and types the VPS's domain to confirm. The old
+  connection stops at once, and they run the new command on the rebuilt
+  VPS.
+- Two-step sign-in: a customer who loses their phone and their recovery
+  codes can't get a new command until QuantumByte support resets their
+  two-step sign-in. Ask them to keep the recovery codes.
+- One app per VPS. A second app is refused with "Each VPS runs one app.
+  Order another VPS from <you> for another app." A customer may have any
+  number of VPSes.
 - QuantumByte's agent on the VPS runs as root and updates itself from
   QuantumByte. It only connects outwards, once a minute. The app, its
   database, its certificates and a nightly backup all stay on the VPS.
