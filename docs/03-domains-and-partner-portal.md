@@ -61,8 +61,10 @@ Where the module writes the DNS record for them:
 
 ## Your partner portal
 
-Your team signs in at the address QuantumByte gives you, with the email and
-password QuantumByte set. The portal has:
+The first person joins through the invite link QuantumByte gives you. They
+add the rest of the team under **Security** → **People who can sign in**:
+each gets a one-use link that works for 7 days. Everyone signs in with a link
+emailed to them, or with Google. The portal has:
 
 - **Balance** (or **Owed to QuantumByte**), **Available for new orders**,
   **Price per credit** and **Terms**.
