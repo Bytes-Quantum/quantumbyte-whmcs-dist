@@ -168,6 +168,11 @@ Then go through [Before you start](#before-you-start) yourself.
      - **cPanel**: their cPanel account at you ([Publish to cPanel](02-publishing.md#publish-to-cpanel))
    - **Product kind**: **AI Builder plan**. For extra credits, see
      [Sell extra credits](#sell-extra-credits-credit-packs).
+   - **Own servers allowed**: how many servers of their own (rented
+     anywhere) the customer may add in QuantumByte, from 0 to 100. The
+     setting only matters on plans that publish to the client's VPS. `0`,
+     the default, means none. See
+     [Customers' own servers](02-publishing.md#customers-own-servers).
    - Choose **Automatically setup the product as soon as the first payment
      is received**.
 3. **Save Changes**. Set **Pricing** as for any product.
@@ -183,6 +188,7 @@ Then go through [Before you start](#before-you-start) yourself.
 - Changing **Publish to** later reaches QuantumByte on the customer's next
   sign-in, upgrade or renewal, and applies from their next Publish. An app
   moved that way starts at the new place with an empty database.
+  **Own servers allowed** reaches QuantumByte the same way.
 - If you already sell hosting, put your hosting plan and the AI Builder
   product in a WHMCS **Product Bundle** (Configuration → System Settings →
   Product Bundles). One order, two services, each set up, billed and renewed on its

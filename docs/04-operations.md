@@ -66,10 +66,14 @@ sign-in refused. Apps on your Kubernetes or in their cPanel account answer
 "This site is no longer available" (HTTP 404). 30 days later QuantumByte
 deletes its own data for the account, the app, its data and backups on your
 cluster or in their cPanel account, and the app's database on your MongoDB.
-On a VPS nothing is stopped or deleted: the app, its data and backups stay,
-and QuantumByte's agent there stops checking in. One exception: a VPS app
-that was already on the "unavailable" page before this release can keep
-showing it after the agent stops, until a later agent update.
+On a VPS nothing is stopped or deleted: the app, its data and backups stay.
+On a VPS with the minute timer, QuantumByte's agent stops checking in; a
+VPS that updates by command has no agent running to stop. One exception: a VPS app
+on the minute timer that was already on the "unavailable" page before
+November 2026's release (update by command) keeps showing it after the agent stops. Only someone on the VPS can
+start the app again. A VPS installed again before that (see
+[Server security](06-server-security.md#what-runs-as-root-and-when)) gets its
+app back at its first `sudo quantumbyte update`.
 
 ### Updating the module
 
@@ -207,9 +211,12 @@ app before: it waits until QuantumByte is reachable, then pulls its image.
 
 If QuantumByte ends the partnership, it gives up what it holds of yours:
 the kubeconfig, the MongoDB connection string and the cPanel account tokens
-are deleted, and each VPS agent switches itself off and leaves the app, its
-data and its backups running. From then on QuantumByte holds, suspends and
-deletes nothing on your side, whatever happens to a service in WHMCS. If
+are deleted, and each VPS agent on the minute timer switches itself off and
+leaves the app, its data and its backups running. A VPS that updates by
+command has no QuantumByte agent running to switch off; its next
+`sudo quantumbyte update` brings no new app version, only signed agent
+updates. From then on QuantumByte holds, suspends and deletes nothing on
+your side, whatever happens to a service in WHMCS. If
 the partnership resumes, connect the cluster and the database again; the
 WHMCS cron sends every cPanel account's token again within a run or two,
 suspended and terminated customers included. Each VPS customer runs the

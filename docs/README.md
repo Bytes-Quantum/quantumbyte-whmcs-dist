@@ -11,9 +11,11 @@ The module has two parts:
   When a customer's invoice is paid, WHMCS creates a QuantumByte account
   loaded with the product's credits. The customer opens it from the client
   area with **Open AI Builder**, without a password. It also hands cPanel
-  accounts to QuantumByte and keeps your customers' DNS records in step.
+  accounts to QuantumByte and keeps your customers' DNS records in step for
+  apps on your Kubernetes.
 - **QuantumByte on VPS** (`modules/addons/quantumbyte_vps/`): an addon that
-  hands VPSes to QuantumByte and points their domains at them. Your
+  hands VPSes to QuantumByte and shows whether their domains point at them
+  (you set those records; it never writes DNS for a VPS). Your
   customers connect their VPSes themselves, from QuantumByte. Activate it if
   you sell VPS plans, or to let registrars take DNS records.
 
@@ -29,6 +31,13 @@ The module has two parts:
    the module, limits, troubleshooting, what runs without QuantumByte.
 5. [Upgrading to 1.1](05-upgrade-1.1.md): customers now connect their own
    VPS; what changes for you and them.
+6. [Server security](06-server-security.md): what QuantumByte can and can't
+   do on a customer's VPS, for your security team. English and Indonesian.
+7. [Upgrading to 1.2](07-upgrade-1.2.md): the module and QuantumByte stop
+   setting DNS for VPSes and apps on a VPS; records the module already set
+   are yours now.
+8. [Upgrading to 1.3](08-upgrade-1.3.md): customers on VPS plans may add
+   servers of their own, up to a number you set per product.
 
 ## Placeholders
 
