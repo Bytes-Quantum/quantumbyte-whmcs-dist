@@ -12,7 +12,18 @@ you, and an app. They can also buy a new domain there; it's connected once
 registered. QuantumByte serves the app on that name with its own
 certificate once DNS points at it.
 
-Where the module writes the DNS record for them:
+**Neither the module nor QuantumByte writes a record for an app on a VPS.**
+The customer is shown the record to create (a CNAME to the VPS's own
+domain, or A records for `@`), and whoever runs that domain's DNS creates
+it, usually the customer in your DNS panel. The module never moves or
+removes a record for such an app. Records it wrote for one before 1.2.0
+stay where they are and are yours now ([Upgrading to 1.2](07-upgrade-1.2.md)).
+A domain whose app moves from your Kubernetes to a VPS keeps its old
+record, and the old copy keeps serving it, until you or the customer point
+the domain at the VPS. The module then stops tracking the record and
+leaves the zone alone.
+
+For an app on your Kubernetes, the module writes the DNS record for them:
 
 1. **Your cPanel server**: the customer has an active cPanel account at
    you whose domain is the zone. Written through WHM's zone API with the
@@ -32,8 +43,7 @@ Where the module writes the DNS record for them:
 
 - List a registrar only if WHMCS shows *all* of a domain's records for it:
   saving DNS through a registrar module replaces every record it shows.
-- Only the one name chosen is written: a CNAME to the app, or A records
-  for `@` on a VPS (a bare domain can't hold a CNAME). A CNAME is never put
+- Only the one name chosen is written: a CNAME to the app. A CNAME is never put
   beside other records of that name; the customer is told why. Anything
   replaced (an old A, an AAAA that would send visitors to the old server)
   is shown first and needs confirming; mail that follows the name is
@@ -43,7 +53,7 @@ Where the module writes the DNS record for them:
   the manual record.
 - **Disconnect** removes the module's records and puts back what they
   replaced. A record that was already there is left.
-- Records follow the app: rewritten when it moves, removed when it's
+- Records follow the app between your clusters: rewritten when it moves, removed when it's
   deleted. The cron checks each customer at most once every 30 minutes,
   so DNS follows a move within about 30 minutes; opening the service page
   changes no records. A check where nothing moved writes nothing. Terminating one service removes no records: the customer's
