@@ -18,12 +18,11 @@ domain, or A records for `@`), and whoever runs that domain's DNS creates
 it, usually the customer in your DNS panel. The module never moves or
 removes a record for such an app. Records it wrote for one before 1.2.0
 stay where they are and are yours now ([Upgrading to 1.2](07-upgrade-1.2.md)).
-A domain whose app moves from your Kubernetes to a VPS keeps its old
-record, and the old copy keeps serving it, until you or the customer point
-the domain at the VPS. The module then stops tracking the record and
+A domain whose app moves to a VPS keeps its old record, and the old copy
+keeps serving it, until you or the customer point the domain at the VPS. The module then stops tracking the record and
 leaves the zone alone.
 
-For an app on your Kubernetes, the module writes the DNS record for them:
+For an app that is not on a VPS, the module writes the DNS record for them:
 
 1. **Your cPanel server**: the customer has an active cPanel account at
    you whose domain is the zone. Written through WHM's zone API with the
@@ -53,7 +52,7 @@ For an app on your Kubernetes, the module writes the DNS record for them:
   the manual record.
 - **Disconnect** removes the module's records and puts back what they
   replaced. A record that was already there is left.
-- Records follow the app between your clusters: rewritten when it moves, removed when it's
+- Records follow the app: rewritten when it moves, removed when it's
   deleted. The cron checks each customer at most once every 30 minutes,
   so DNS follows a move within about 30 minutes; opening the service page
   changes no records. A check where nothing moved writes nothing. Terminating one service removes no records: the customer's
@@ -66,8 +65,7 @@ For an app on your Kubernetes, the module writes the DNS record for them:
 - A domain bought elsewhere isn't in WHMCS, so it can't be connected here.
   Under the form, each app links to its **Custom domains** in AI Builder,
   signed in: the customer adds the domain there and creates the record it
-  shows at their registrar. cPanel apps say to add domains in the hosting
-  account instead.
+  shows at their registrar.
 
 ## Your partner portal
 
@@ -87,12 +85,8 @@ emailed to them, or with Google. The portal has:
 - **Customers**: accounts your WHMCS created, their package and credits
   left.
 - **Customer apps**: each app, its customer, where it's published
-  (**Your Kubernetes**, **Customer's VPS**, **Customer's cPanel**), its
-  address and status.
-- **Publishing to your Kubernetes**
-  ([Publish to your Kubernetes](02-publishing.md#publish-to-your-kubernetes)).
-- **Your database for cPanel apps**
-  ([Your database for cPanel apps](02-publishing.md#your-database-for-cpanel-apps)).
+  (**Customer's VPS**, or **QuantumByte** for an app published there before
+  your setting applied), its address and status.
 - **Ledger**: every charge and payment, newest first.
 - **Your password**: change it (10 characters or more).
 

@@ -146,10 +146,9 @@ Then go through [Before you start](#before-you-start) yourself.
   of their AI Builder service, or the lowest-ID enabled QuantumByte server
   when they have none. One QuantumByte server per WHMCS is the simple
   setup.
-- DNS upkeep, connecting bought domains, and handing cPanel accounts over
-  run from the module's own `hooks.php`. WHMCS starts loading it when you
-  save the AI Builder product's Module Settings ([Create the
-  product](#create-the-product)).
+- DNS upkeep and connecting bought domains run from the module's own
+  `hooks.php`. WHMCS starts loading it when you save the AI Builder
+  product's Module Settings ([Create the product](#create-the-product)).
 
 ## Create the product
 
@@ -161,17 +160,14 @@ Then go through [Before you start](#before-you-start) yourself.
    - Server Group: the group you made for the server
    - **Credits**: how many credits the package includes. They load into
      the customer's account on creation and on each paid renewal.
-   - **Publish to**: where this plan's apps go live when the customer
-     presses Publish:
-     - **Our Kubernetes**: your cluster ([Publish to your Kubernetes](02-publishing.md#publish-to-your-kubernetes))
-     - **The client's VPS**: a VPS you sell them ([Publish to your customers' VPS](02-publishing.md#publish-to-your-customers-vps))
-     - **cPanel**: their cPanel account at you ([Publish to cPanel](02-publishing.md#publish-to-cpanel))
+   - **Publish to (retired)**: leave as it is. Customers always publish to
+     a server of their own ([Publishing](02-publishing.md)); the setting
+     keeps its place so the ones after it do not move.
    - **Product kind**: **AI Builder plan**. For extra credits, see
      [Sell extra credits](#sell-extra-credits-credit-packs).
    - **Own servers allowed**: how many servers of their own (rented
-     anywhere) the customer may add in QuantumByte, from 0 to 100. The
-     setting only matters on plans that publish to the client's VPS. `0`,
-     the default, means none. See
+     anywhere) the customer may add in QuantumByte, from 0 to 100. A
+     customer may always add one, so `0`, the default, means one. See
      [Customers' own servers](02-publishing.md#customers-own-servers).
    - Choose **Automatically setup the product as soon as the first payment
      is received**.
@@ -183,18 +179,14 @@ Then go through [Before you start](#before-you-start) yourself.
 
 **Things to note**
 
-- The product decides where the app goes, and your customer never
-  chooses. They see Publish and their address.
-- Changing **Publish to** later reaches QuantumByte on the customer's next
-  sign-in, upgrade or renewal, and applies from their next Publish. An app
-  moved that way starts at the new place with an empty database.
-  **Own servers allowed** reaches QuantumByte the same way.
+- Your customer adds a server of their own in QuantumByte and publishes
+  to it. They see Publish and their address.
+- **Own servers allowed** reaches QuantumByte on the customer's next
+  sign-in, upgrade or renewal.
 - If you already sell hosting, put your hosting plan and the AI Builder
   product in a WHMCS **Product Bundle** (Configuration → System Settings →
   Product Bundles). One order, two services, each set up, billed and renewed on its
-  own. With the AI Builder item set to **Publish to: cPanel**, the app goes
-  into the cPanel account from the same bundle. Selling QuantumByte as a
-  product *addon* is not supported.
+  own. Selling QuantumByte as a product *addon* is not supported.
 - Credits roll over; unused credits never expire.
 
 ## Sell extra credits (credit packs)
@@ -210,7 +202,7 @@ portal's ledger names the pack.
    group** as your AI Builder plans.
 2. **Module Settings** tab:
    - **Credits**: the credits one pack adds.
-   - **Product kind**: **Credit pack**. **Publish to** is ignored.
+   - **Product kind**: **Credit pack**.
    - Choose **Automatically setup the product as soon as the first payment
      is received**.
 3. **Pricing** tab: payment type **One Time**.

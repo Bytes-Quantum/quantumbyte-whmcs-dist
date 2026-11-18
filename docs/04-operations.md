@@ -27,53 +27,39 @@ The other services:
   app there is not moved anywhere. Suspending the VPS is not passed on:
   QuantumByte still shows it connected; a publish waits until the VPS runs
   it again.
-- **Terminate the cPanel service**: WHMCS's cPanel module deletes the
-  account; QuantumByte stops publishing there and the module revokes its
-  token. Suspending the cPanel service takes the site down with the
-  account.
-- **Terminate the AI Builder service** of a cPanel customer: the cPanel
-  token stays with QuantumByte until the purge 30 days later, which
-  deletes the app from the account and then revokes the token.
 
 ### Suspend and terminate by plan
 
-"Kubernetes and cPanel plans" below also covers a plan whose **Publish to**
-is not set yet.
+From 1.4, every plan is treated the same, whatever its retired **Publish to**
+setting holds.
 
-**A suspended VPS plan.** Publishing from that plan is refused with
+**A suspended plan.** Publishing from that plan is refused with
 "Publishing is paused. Ask `<you>` about your plan." This holds even while
-another plan of the customer is active. The app on the customer's VPS keeps
-running: QuantumByte never stops or deletes anything on their server.
+another plan of the customer is active. The app on the customer's server
+keeps running: QuantumByte never stops or deletes anything on their server.
 
-**Suspended, every plan on a VPS.** When no plan is active and every plan
-of the customer publishes to a VPS, the customer keeps signing in and
-building. WHMCS hides its own sign-in on a suspended service, so their
-service page shows an **Open AI Builder** button instead. AI work still
-stops once their credits run out.
-
-**Suspended Kubernetes and cPanel plans.** When no plan is active, sign-in
-is refused. Their apps on your Kubernetes or in their cPanel account answer
-"This site is temporarily unavailable" (HTTP 503).
+**Suspended, no plan active.** The customer keeps signing in and building.
+WHMCS hides its own sign-in on a suspended service, so their service page
+shows an **Open AI Builder** button instead. AI work still stops once their
+credits run out.
 
 **Several plans.** While any plan is active, the customer keeps signing in;
-each suspended plan only stops publishing, as above. When none is active and
-the customer has a Kubernetes or cPanel plan, suspended or terminated, the
-Kubernetes and cPanel rules apply to the whole account. Their app on a VPS
-still keeps running.
+each suspended plan only stops publishing, as above.
 
 **Terminated.** Once every plan is terminated, the account is closed and
-sign-in refused. Apps on your Kubernetes or in their cPanel account answer
-"This site is no longer available" (HTTP 404). 30 days later QuantumByte
-deletes its own data for the account, the app, its data and backups on your
-cluster or in their cPanel account, and the app's database on your MongoDB.
-On a VPS nothing is stopped or deleted: the app, its data and backups stay.
-On a VPS with the minute timer, QuantumByte's agent stops checking in; a
-VPS that updates by command has no agent running to stop. One exception: a VPS app
-on the minute timer that was already on the "unavailable" page before
-November 2026's release (update by command) keeps showing it after the agent stops. Only someone on the VPS can
-start the app again. A VPS installed again before that (see
+sign-in refused. From that moment QuantumByte refuses the customer's
+servers new releases and image downloads; what already runs there keeps
+running. 30 days later QuantumByte deletes its own data for the account.
+On a server nothing is stopped or deleted: the app, its data and backups
+stay. On a server with the minute timer, QuantumByte's agent stops checking
+in; a server that updates by command has no agent running to stop. One
+exception: a server app on the minute timer that was already on the
+"unavailable" page before November 2026's release (update by command) keeps
+showing it after the agent stops. Only someone on the server can start the
+app again. A server installed again before that (see
 [Server security](06-server-security.md#what-runs-as-root-and-when)) gets its
-app back at its first `sudo quantumbyte update`.
+app back at its first `sudo quantumbyte update`. If you restore the
+service with **Create**, releases and downloads work again.
 
 ### Updating the module
 
@@ -83,7 +69,7 @@ It backs up the folders it replaces. Settings live in WHMCS's database, so
 nothing needs re-entering.
 
 Coming from a version without `modules/servers/quantumbyte/hooks.php`:
-DNS upkeep, bought domains and cPanel hand-over keep running while the
+DNS upkeep and bought domains keep running while the
 QuantumByte on VPS addon is active. Before you deactivate it, open an AI
 Builder product → **Module Settings** → **Save Changes** once, so WHMCS
 loads the module's own hooks.
@@ -120,12 +106,7 @@ the shared storage if the nodes share the WHMCS folder.
 - A customer email that already has a QuantumByte account is refused.
 - Customers sign in only through you. QuantumByte's own password, Google
   and email sign-in refuse them.
-- VPS and cPanel: one app per VPS (a customer may have several), one app
-  per cPanel account.
-- Your Kubernetes: customers' own domains take names like `www`, never the
-  bare domain (`@`).
-- cPanel: no custom domains through QuantumByte. The app runs on the
-  account's main domain; other domains are managed in the hosting account.
+- One app per VPS (a customer may have several).
 - VPS: backups stay on the VPS (none leave it). A normal update has no gap:
   visitors stay on the old version until the new one is ready.
 - Up to 5 domains per app.
@@ -140,8 +121,9 @@ the shared storage if the nodes share the WHMCS folder.
 - **Utilities → Module Queue**: failed creates, renewals, upgrades, with
   QuantumByte's message. Fix the cause, then **Retry** (always safe).
 - **Configuration → System Logs → Module Log**: every call to QuantumByte,
-  with the API key, sign-in links and cPanel tokens scrubbed. Turn module logging on while you debug.
-- **Activity Log**: VPS hand-over, cPanel tokens, domain upkeep, and AI
+  with the API key and sign-in links scrubbed. Turn module logging on while
+  you debug.
+- **Activity Log**: VPS hand-over, domain upkeep, and AI
   Builder services that are Active with no QuantumByte account (one line
   each). A cron check that keeps failing (a refused key, QuantumByte
   unreachable) is logged once per server entry, and once more when it works
@@ -152,8 +134,7 @@ the shared storage if the nodes share the WHMCS folder.
 - **Addons → QuantumByte on VPS**: each VPS as QuantumByte sees it:
   connected or waiting for the customer to connect it, when it was last
   seen, its last release and the release it runs.
-- Partner portal: balance, statements, **Customer apps**, and the problems
-  the Kubernetes and database cards show.
+- Partner portal: balance, statements and **Customer apps**.
 
 **Common messages**
 
@@ -168,13 +149,11 @@ the shared storage if the nodes share the WHMCS folder.
 | "QuantumByte has not set your prices yet" | Ask QuantumByte to set your terms. |
 | "app_link.token_url must be https://<your WHMCS>/oauth/token.php" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
 | "… already has a QuantumByte account. Ask the customer to use another email address for this service." | The customer uses another email for this service. |
-| "…hasn't finished setting up publishing for your plan" | Connect your cluster or your cPanel database ([Publishing](02-publishing.md)). |
+| "…hasn't finished setting up publishing for your plan" | The customer has no server and can't add another of their own: raise **Own servers allowed** on their product, or sell them a VPS. |
 | "AI Builder service #N is Active, but has no live QuantumByte account" (Activity Log, service page, dashboard) | The order was added as Active, or the service was set Active by hand. Press **Create** under Module Commands. |
 | "Connect your server first." (the customer, at Publish) | The customer hasn't connected their VPS: they press **Connect this server in QuantumByte** on the VPS's page and run the command it shows ([Publishing](02-publishing.md#publish-to-your-customers-vps)). |
 | "…is still setting up your server" | The VPS has no domain yet: set the domain on the VPS service. |
 | "Customers now connect their own server in QuantumByte. Update the QuantumByte VPS addon to 1.1.0." | Your addon is older than 1.1.0: [update the module](05-upgrade-1.1.md). |
-| "…already has a website on <domain>" | Empty the cPanel account's `public_html` and remove other Application Manager apps. |
-| "Missing rights in <namespace>: …" | Run the setup commands again, then **Check again**. |
 | "This app already has the maximum of 5 domains" | Disconnect a domain first. |
 
 ### Installer messages
@@ -203,24 +182,15 @@ in place."
 ## What runs without QuantumByte
 
 A published app needs QuantumByte only to be published again. It serves,
-signs its users in and stores data and uploads on your side: in your
-cluster, on the customer's VPS, or in the cPanel account with your
-MongoDB. If QuantumByte is unreachable, the apps keep running. The one
-exception is a Kubernetes pod that starts on a node which has not run the
-app before: it waits until QuantumByte is reachable, then pulls its image.
+signs its users in and stores data and uploads on the customer's VPS. If
+QuantumByte is unreachable, the apps keep running.
 
-If QuantumByte ends the partnership, it gives up what it holds of yours:
-the kubeconfig, the MongoDB connection string and the cPanel account tokens
-are deleted, and each VPS agent on the minute timer switches itself off and
-leaves the app, its data and its backups running. A VPS that updates by
-command has no QuantumByte agent running to switch off; its next
+If QuantumByte ends the partnership, each VPS agent on the minute timer
+switches itself off and leaves the app, its data and its backups running. A
+VPS that updates by command has no QuantumByte agent running to switch off; its next
 `sudo quantumbyte update` brings no new app version, only signed agent
 updates. From then on QuantumByte holds, suspends and deletes nothing on
-your side, whatever happens to a service in WHMCS. If
-the partnership resumes, connect the cluster and the database again; the
-WHMCS cron sends every cPanel account's token again within a run or two,
-suspended and terminated customers included. Each VPS customer runs the
-install command again to connect their server. This does not touch the
-app. A suspension or termination made in WHMCS meanwhile is then applied
-to apps on your Kubernetes and in cPanel accounts. An app on a VPS is never
-stopped or deleted. The server belongs to the customer.
+your side, whatever happens to a service in WHMCS. If the partnership
+resumes, each VPS customer runs the install command again to connect their
+server. This does not touch the app. An app on a VPS is never stopped or
+deleted. The server belongs to the customer.
