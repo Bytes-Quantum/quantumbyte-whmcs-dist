@@ -2,17 +2,16 @@
 
 For the WHMCS admin at a hosting company. Your customers buy an AI app
 builder in your store, pay you, sign in from your client area, and publish
-their apps to infrastructure you choose: your Kubernetes, their VPS, or
-their cPanel account. QuantumByte never invoices your customers.
+their apps to a server of their own. QuantumByte never invoices your
+customers.
 
 The module has two parts:
 
 - **QuantumByte** (`modules/servers/quantumbyte/`): a provisioning module.
   When a customer's invoice is paid, WHMCS creates a QuantumByte account
   loaded with the product's credits. The customer opens it from the client
-  area with **Open AI Builder**, without a password. It also hands cPanel
-  accounts to QuantumByte and keeps your customers' DNS records in step for
-  apps on your Kubernetes.
+  area with **Open AI Builder**, without a password. It also keeps your
+  customers' DNS records in step for apps that are not on a VPS.
 - **QuantumByte on VPS** (`modules/addons/quantumbyte_vps/`): an addon that
   hands VPSes to QuantumByte and shows whether their domains point at them
   (you set those records; it never writes DNS for a VPS). Your
@@ -23,8 +22,8 @@ The module has two parts:
 
 1. [Install](01-install.md): what you need, installing the module, adding
    the server, creating the product, testing an order.
-2. [Publishing](02-publishing.md): where your customers' apps go live (your
-   Kubernetes, their VPS, their cPanel account) and what each needs.
+2. [Publishing](02-publishing.md): where your customers' apps go live (a
+   server of their own, or a VPS you sell) and what each needs.
 3. [Domains and the partner portal](03-domains-and-partner-portal.md):
    customers' own domains, and your team's page at QuantumByte.
 4. [Operations](04-operations.md): suspend, terminate, upgrade, updating
@@ -38,6 +37,10 @@ The module has two parts:
    are yours now.
 8. [Upgrading to 1.3](08-upgrade-1.3.md): customers on VPS plans may add
    servers of their own, up to a number you set per product.
+9. [Upgrading to 1.4](09-upgrade-1.4.md): customers publish only to
+   servers of their own; **Publish to** is retired.
+10. [Upgrading to 1.5](10-upgrade-1.5.md): the module stops handing cPanel
+    accounts to QuantumByte and revokes the cPanel tokens it made.
 
 ## Placeholders
 
