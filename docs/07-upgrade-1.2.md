@@ -1,5 +1,9 @@
 # Upgrading to 1.2: you or your customer set DNS for VPSes; the module only checks it
 
+Retired in 1.6: the addon and the domain features are gone. See
+[Upgrading to 1.6](11-upgrade-1.6.md), which also says how to find the
+records older versions wrote. This page is what 1.2 did.
+
 For hosters who sell VPS plans with QuantumByte. From 1.2, neither
 QuantumByte nor the module writes DNS records for VPSes or for apps on a
 VPS. Nothing changes for apps on your Kubernetes or in cPanel.

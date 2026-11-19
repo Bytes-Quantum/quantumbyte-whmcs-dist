@@ -15,8 +15,8 @@
 3. **System URL** (Configuration → System Settings → General Settings)
    set to your real public address, starting with `https://`.
 4. `https://whmcs.example.com/oauth/token.php` reachable from the internet.
-5. The WHMCS cron running. WHMCS recommends every 5 minutes. VPS hand-over
-   and domain upkeep run from it.
+5. The WHMCS cron running. WHMCS recommends every 5 minutes. The daily
+   check for services with no account runs from it.
 6. Outbound HTTPS (443) from WHMCS to `<QB hostname>`.
 7. At least one payment gateway active, so customers can order.
 
@@ -52,8 +52,8 @@ new one and stop the old one; a stopped key is refused at once.
 
 ### Install with the installer script
 
-`install-quantumbyte-whmcs.sh` checks your WHMCS, then copies both folders
-into it. It never writes to the WHMCS database and holds no secrets.
+`install-quantumbyte-whmcs.sh` checks your WHMCS, then copies the module
+folder into it. It never writes to the WHMCS database and holds no secrets.
 
 1. Find the user that owns your WHMCS files, and run everything below as
    that user (root only if root owns them):
@@ -116,15 +116,14 @@ changes nothing.
 
 ### Install by hand
 
-If you can't run the script, copy two folders from the module archive into
+If you can't run the script, copy one folder from the module archive into
 your WHMCS root, as the owner of the WHMCS files:
 
 - `modules/servers/quantumbyte/` (with its `lib/` and `templates/`)
-- `modules/addons/quantumbyte_vps/`
 
 Then go through [Before you start](#before-you-start) yourself.
 
-### Add the server and the addon
+### Add the server
 
 1. Configuration → System Settings → **Servers** → **Add New Server**:
    - Module: **QuantumByte**
@@ -133,9 +132,6 @@ Then go through [Before you start](#before-you-start) yourself.
 2. Press **Test Connection**. Expect "Connection successful".
 3. Name it (e.g. `QuantumByte`), **Save Changes**.
 4. Put the server in its own server group (**Create New Group**).
-5. Only if you sell VPS plans, or want registrars to take DNS records:
-   Configuration → System Settings → **Addon Modules** → **QuantumByte on
-   VPS** → **Activate**. Under **Configure**, give your admin role access.
 
 **Things to note**
 
@@ -146,9 +142,9 @@ Then go through [Before you start](#before-you-start) yourself.
   of their AI Builder service, or the lowest-ID enabled QuantumByte server
   when they have none. One QuantumByte server per WHMCS is the simple
   setup.
-- DNS upkeep and connecting bought domains run from the module's own
-  `hooks.php`. WHMCS starts loading it when you save the AI Builder
-  product's Module Settings ([Create the product](#create-the-product)).
+- The module's own `hooks.php` runs the daily check and the credit pack
+  checkout. WHMCS starts loading it when you save the AI Builder product's
+  Module Settings ([Create the product](#create-the-product)).
 
 ## Create the product
 
@@ -160,15 +156,13 @@ Then go through [Before you start](#before-you-start) yourself.
    - Server Group: the group you made for the server
    - **Credits**: how many credits the package includes. They load into
      the customer's account on creation and on each paid renewal.
-   - **Publish to (retired)**: leave as it is. Customers always publish to
+   - **Publish to (retired)**: leave as it is. Customers run their apps on
      a server of their own ([Publishing](02-publishing.md)); the setting
      keeps its place so the ones after it do not move.
    - **Product kind**: **AI Builder plan**. For extra credits, see
      [Sell extra credits](#sell-extra-credits-credit-packs).
-   - **Own servers allowed**: how many servers of their own (rented
-     anywhere) the customer may add in QuantumByte, from 0 to 100. A
-     customer may always add one, so `0`, the default, means one. See
-     [Customers' own servers](02-publishing.md#customers-own-servers).
+   - **Own servers allowed (retired)**: leave as it is. QuantumByte keeps
+     no list of servers, so it counts nothing and the module sends nothing.
    - Choose **Automatically setup the product as soon as the first payment
      is received**.
 3. **Save Changes**. Set **Pricing** as for any product.
@@ -179,10 +173,9 @@ Then go through [Before you start](#before-you-start) yourself.
 
 **Things to note**
 
-- Your customer adds a server of their own in QuantumByte and publishes
-  to it. They see Publish and their address.
-- **Own servers allowed** reaches QuantumByte on the customer's next
-  sign-in, upgrade or renewal.
+- Your customer publishes their app in QuantumByte, downloads two files
+  and runs them on a server they choose. See
+  [Publishing](02-publishing.md).
 - If you already sell hosting, put your hosting plan and the AI Builder
   product in a WHMCS **Product Bundle** (Configuration → System Settings →
   Product Bundles). One order, two services, each set up, billed and renewed on its
@@ -236,12 +229,11 @@ portal's ledger names the pack.
    Successful" on the service, status **Active**.
 3. Client area → the service page → **Open AI Builder**. The customer lands
    in the AI Builder, signed in, with the package's credits.
-4. Build a small app, press **Publish**. The dialog shows the address, with
-   no choice of where.
-5. Partner portal → **Customer apps**: the app, where it went, **Running**.
-6. Open the address.
-7. Back on the service page: **Connect a domain**, then check the name
-   turns **Live**.
+4. Build a small app, press **Publish**. QuantumByte builds the app's
+   image, then offers a `docker-compose.yml` and an `.env` to download.
+5. Partner portal → **Customer apps**: the app is listed.
+6. On any test server with Docker, put both files in one folder and run
+   `docker compose up -d`. Open the app.
 
 **Things to note**
 

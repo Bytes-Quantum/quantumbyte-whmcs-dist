@@ -1,5 +1,8 @@
 # Upgrading to 1.1: customers connect their own VPS
 
+Retired in 1.6: customers no longer connect a VPS in QuantumByte. See
+[Upgrading to 1.6](11-upgrade-1.6.md). This page is what 1.1 did.
+
 For hosters who sell VPS plans with QuantumByte. Version 1.1 changes how
 QuantumByte's agent is installed on a customer's VPS. Nothing changes for
 Kubernetes or cPanel plans.
@@ -14,8 +17,7 @@ the VPS was never set up.
 **From 1.1:** the addon never logs in to a VPS. It still registers each new
 VPS on the customer's QuantumByte account and points the VPS's domain at
 it. The customer then connects the VPS themselves, with one command that
-QuantumByte shows them. The steps are in
-[Publishing: what happens after a VPS order is paid](02-publishing.md#publish-to-your-customers-vps).
+QuantumByte shows them.
 
 Nobody but the customer uses the root password. They may change it
 whenever they like.

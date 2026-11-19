@@ -11,9 +11,9 @@ Run these from the AI Builder service's **Module Commands** as usual.
 
 | WHMCS action | What happens |
 | --- | --- |
-| **Suspend** | The plan stops publishing. What else stops depends on the customer's plans: see [Suspend and terminate by plan](#suspend-and-terminate-by-plan). Data is kept. |
-| **Unsuspend** | Publishing, sign-in and apps come back as they were. |
-| **Terminate** | Once *every* AI Builder service of the customer is terminated, the account is closed and its data deleted 30 days later. An app on a VPS is never stopped or deleted: see [Suspend and terminate by plan](#suspend-and-terminate-by-plan). |
+| **Suspend** | The plan stops publishing. What else stops depends on the customer's plans: see [Suspend and terminate](#suspend-and-terminate). Data is kept. |
+| **Unsuspend** | Publishing and sign-in come back as they were. |
+| **Terminate** | Once *every* AI Builder service of the customer is terminated, the account is closed and its data deleted 30 days later. An app already running on the customer's server is never stopped or deleted: see [Suspend and terminate](#suspend-and-terminate). |
 | **Create** on a terminated service | Within those 30 days: restores the account as it was. No credits granted or charged again. After that, order a new service. |
 | **Renewal paid** | The product's Credits load again. A renewal that failed (e.g. your balance ran out) is caught up by the next successful one, or by retrying it in the Module Queue. |
 | **Upgrade** | Once its invoice is paid, the extra credits load for what's left of the billing period, as WHMCS prorates it. Each paid upgrade invoice loads once, even after a downgrade in the same period. |
@@ -21,22 +21,16 @@ Run these from the AI Builder service's **Module Commands** as usual.
 | **Change Package** with no paid upgrade invoice | The package changes; no credits load. To give a customer a bigger package for free, raise an upgrade invoice and mark it paid: the paid invoice is what loads the credits. |
 | **Credit pack paid** | Its credits load into the customer's account once, however often Create runs. No app, no plan. Suspend, Unsuspend and Terminate on it change nothing; Renew and Change Package are refused. |
 
-The other services:
+### Suspend and terminate
 
-- **Terminate the VPS service**: QuantumByte stops using it; the customer's
-  app there is not moved anywhere. Suspending the VPS is not passed on:
-  QuantumByte still shows it connected; a publish waits until the VPS runs
-  it again.
-
-### Suspend and terminate by plan
-
-From 1.4, every plan is treated the same, whatever its retired **Publish to**
-setting holds.
+Every plan is treated the same, whatever its retired **Publish to** setting
+holds. Servers are not part of it: QuantumByte keeps no list of the
+customer's servers, and the module no longer registers VPSes you sell.
 
 **A suspended plan.** Publishing from that plan is refused with
 "Publishing is paused. Ask `<you>` about your plan." This holds even while
 another plan of the customer is active. The app on the customer's server
-keeps running: QuantumByte never stops or deletes anything on their server.
+keeps running: neither QuantumByte nor you can stop it.
 
 **Suspended, no plan active.** The customer keeps signing in and building.
 WHMCS hides its own sign-in on a suspended service, so their service page
@@ -47,19 +41,12 @@ credits run out.
 each suspended plan only stops publishing, as above.
 
 **Terminated.** Once every plan is terminated, the account is closed and
-sign-in refused. From that moment QuantumByte refuses the customer's
-servers new releases and image downloads; what already runs there keeps
-running. 30 days later QuantumByte deletes its own data for the account.
-On a server nothing is stopped or deleted: the app, its data and backups
-stay. On a server with the minute timer, QuantumByte's agent stops checking
-in; a server that updates by command has no agent running to stop. One
-exception: a server app on the minute timer that was already on the
-"unavailable" page before November 2026's release (update by command) keeps
-showing it after the agent stops. Only someone on the server can start the
-app again. A server installed again before that (see
-[Server security](06-server-security.md#what-runs-as-root-and-when)) gets its
-app back at its first `sudo quantumbyte update`. If you restore the
-service with **Create**, releases and downloads work again.
+sign-in refused. From that moment the customer's download key stops
+working: no new image or content downloads, so no new release can be
+installed. The app already running on their server keeps running, with its
+data and backups. 30 days later QuantumByte deletes its own data for the
+account. If you restore the service with **Create**, publishing and
+downloads work again.
 
 ### Updating the module
 
@@ -68,18 +55,17 @@ Download the newer installer, check its sha256, and run it as in
 It backs up the folders it replaces. Settings live in WHMCS's database, so
 nothing needs re-entering.
 
-Coming from a version without `modules/servers/quantumbyte/hooks.php`:
-DNS upkeep and bought domains keep running while the
-QuantumByte on VPS addon is active. Before you deactivate it, open an AI
-Builder product → **Module Settings** → **Save Changes** once, so WHMCS
-loads the module's own hooks.
+Coming from a version before 1.6: deactivate the QuantumByte on VPS addon
+before you update, and delete its folder under `modules/addons` after. The
+addon is retired, and its old code errors on the WHMCS cron once the module
+is new. See [Upgrading to 1.6](11-upgrade-1.6.md).
 
 To go back to a backup, run this as the owner of the WHMCS files, with a
 backup from `~/quantumbyte-whmcs-backups/` (named by date and time). The
 installer prints this line, filled in, at the end of each install:
 
 ```sh
-cd /var/www/whmcs && rm -rf modules/servers/quantumbyte modules/addons/quantumbyte_vps && tar -xzf ~/quantumbyte-whmcs-backups/<backup>.tar.gz
+cd /var/www/whmcs && rm -rf modules/servers/quantumbyte && tar -xzf ~/quantumbyte-whmcs-backups/<backup>.tar.gz
 ```
 
 Reload PHP-FPM afterwards if opcache doesn't check for changed files.
@@ -106,10 +92,9 @@ the shared storage if the nodes share the WHMCS folder.
 - A customer email that already has a QuantumByte account is refused.
 - Customers sign in only through you. QuantumByte's own password, Google
   and email sign-in refuse them.
-- One app per VPS (a customer may have several).
-- VPS: backups stay on the VPS (none leave it). A normal update has no gap:
-  visitors stay on the old version until the new one is ready.
-- Up to 5 domains per app.
+- Apps run on servers the customer chooses. QuantumByte keeps no list of
+  them and checks nothing there, so it cannot see whether an app runs, and
+  backups stay on the customer's server.
 - A customer with less than 1 credit left can't start AI work (chat,
   retries, build approvals, blueprint edits) until credits are added.
   Publishing uses no credits.
@@ -123,17 +108,13 @@ the shared storage if the nodes share the WHMCS folder.
 - **Configuration → System Logs → Module Log**: every call to QuantumByte,
   with the API key and sign-in links scrubbed. Turn module logging on while
   you debug.
-- **Activity Log**: VPS hand-over, domain upkeep, and AI
-  Builder services that are Active with no QuantumByte account (one line
-  each). A cron check that keeps failing (a refused key, QuantumByte
-  unreachable) is logged once per server entry, and once more when it works
-  again.
+- **Activity Log**: AI Builder services that are Active with no QuantumByte
+  account (one line each). A check that keeps failing (a refused key,
+  QuantumByte unreachable) is logged once per server entry, and once more
+  when it works again.
 - **Admin dashboard**: names each QuantumByte server entry whose checks keep
   failing, until they work again, and lists AI Builder services that are
   Active with no QuantumByte account.
-- **Addons → QuantumByte on VPS**: each VPS as QuantumByte sees it:
-  connected or waiting for the customer to connect it, when it was last
-  seen, its last release and the release it runs.
 - Partner portal: balance, statements and **Customer apps**.
 
 **Common messages**
@@ -149,12 +130,7 @@ the shared storage if the nodes share the WHMCS folder.
 | "QuantumByte has not set your prices yet" | Ask QuantumByte to set your terms. |
 | "app_link.token_url must be https://<your WHMCS>/oauth/token.php" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
 | "… already has a QuantumByte account. Ask the customer to use another email address for this service." | The customer uses another email for this service. |
-| "…hasn't finished setting up publishing for your plan" | The customer has no server and can't add another of their own: raise **Own servers allowed** on their product, or sell them a VPS. |
 | "AI Builder service #N is Active, but has no live QuantumByte account" (Activity Log, service page, dashboard) | The order was added as Active, or the service was set Active by hand. Press **Create** under Module Commands. |
-| "Connect your server first." (the customer, at Publish) | The customer hasn't connected their VPS: they press **Connect this server in QuantumByte** on the VPS's page and run the command it shows ([Publishing](02-publishing.md#publish-to-your-customers-vps)). |
-| "…is still setting up your server" | The VPS has no domain yet: set the domain on the VPS service. |
-| "Customers now connect their own server in QuantumByte. Update the QuantumByte VPS addon to 1.1.0." | Your addon is older than 1.1.0: [update the module](05-upgrade-1.1.md). |
-| "This app already has the maximum of 5 domains" | Disconnect a domain first. |
 
 ### Installer messages
 
@@ -182,15 +158,11 @@ in place."
 ## What runs without QuantumByte
 
 A published app needs QuantumByte only to be published again. It serves,
-signs its users in and stores data and uploads on the customer's VPS. If
-QuantumByte is unreachable, the apps keep running.
+signs its users in and stores data and uploads on the customer's own
+server. If QuantumByte is unreachable, the apps keep running.
 
-If QuantumByte ends the partnership, each VPS agent on the minute timer
-switches itself off and leaves the app, its data and its backups running. A
-VPS that updates by command has no QuantumByte agent running to switch off; its next
-`sudo quantumbyte update` brings no new app version, only signed agent
-updates. From then on QuantumByte holds, suspends and deletes nothing on
-your side, whatever happens to a service in WHMCS. If the partnership
-resumes, each VPS customer runs the install command again to connect their
-server. This does not touch the app. An app on a VPS is never stopped or
-deleted. The server belongs to the customer.
+If QuantumByte ends the partnership, apps already running on customers'
+servers keep running with their data and backups. Customers can no longer
+publish or download a new release until the partnership resumes. QuantumByte
+holds, suspends and deletes nothing on a customer's server, whatever
+happens to a service in WHMCS.
