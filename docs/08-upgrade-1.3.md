@@ -1,5 +1,8 @@
 # Upgrading to 1.3: customers may add servers of their own
 
+Retired in 1.6: **Own servers allowed** is no longer read or sent. See
+[Upgrading to 1.6](11-upgrade-1.6.md). This page is what 1.3 did.
+
 For hosters who sell AI Builder plans that publish to the customer's VPS.
 Version 1.3 adds one product setting, **Own servers allowed**. With it, a
 customer may also publish to servers they rent somewhere else, up to the
@@ -9,8 +12,7 @@ or cPanel plans.
 ## What changed
 
 - **A new product setting:** AI Builder product → **Module Settings** →
-  **Own servers allowed**, from 0 to 100. How it works:
-  [Customers' own servers](02-publishing.md#customers-own-servers).
+  **Own servers allowed**, from 0 to 100.
 - **The module sends it to QuantumByte** next to **Publish to**, at each
   create, upgrade or downgrade, renewal, suspend and unsuspend, and when the
   customer opens AI Builder (a suspended VPS plan's **Open AI Builder**

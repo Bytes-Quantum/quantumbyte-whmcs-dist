@@ -1,5 +1,9 @@
 # Upgrading to 1.4: customers publish only to servers of their own
 
+Servers are not added in QuantumByte any more from 1.6, and **Own servers
+allowed** is retired: see [Upgrading to 1.6](11-upgrade-1.6.md). This page
+is what 1.4 did.
+
 Version 1.4 retires the product setting **Publish to**. Every customer's apps
 go live on a server of their own, which they add in QuantumByte under **Your
 servers**. Nothing is lost: the setting keeps its place on the product, so
