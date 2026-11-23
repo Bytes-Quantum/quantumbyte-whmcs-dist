@@ -90,8 +90,9 @@ the shared storage if the nodes share the WHMCS folder.
   credits into the same account. To sell credits without a second plan,
   use a [credit pack](01-install.md#sell-extra-credits-credit-packs).
 - A customer email that already has a QuantumByte account is refused.
-- Customers sign in only through you. QuantumByte's own password, Google
-  and email sign-in refuse them.
+- Customers have no QuantumByte password, and Google sign-in refuses them.
+  They sign in from your client area, or at QuantumByte with a link emailed
+  to their address.
 - Apps run on servers the customer chooses. QuantumByte keeps no list of
   them and checks nothing there, so it cannot see whether an app runs, and
   backups stay on the customer's server.
@@ -109,12 +110,11 @@ the shared storage if the nodes share the WHMCS folder.
   with the API key and sign-in links scrubbed. Turn module logging on while
   you debug.
 - **Activity Log**: AI Builder services that are Active with no QuantumByte
-  account (one line each). A check that keeps failing (a refused key,
-  QuantumByte unreachable) is logged once per server entry, and once more
-  when it works again.
-- **Admin dashboard**: names each QuantumByte server entry whose checks keep
-  failing, until they work again, and lists AI Builder services that are
-  Active with no QuantumByte account.
+  account (one line each).
+- **Admin dashboard**: AI Builder services that are Active with no
+  QuantumByte account, and a warning while the retired QuantumByte on VPS
+  addon is still active. Failing checks that modules before 1.6 listed here
+  are cleared by the next daily cron.
 - Partner portal: balance, statements and **Customer apps**.
 
 **Common messages**
@@ -123,7 +123,6 @@ the shared storage if the nodes share the WHMCS folder.
 | --- | --- |
 | Test Connection "Set Configuration → System Settings → General Settings → System URL to https://…" | Set System URL to `https://…` ([Before you start](01-install.md#before-you-start)). |
 | Test Connection "QuantumByte refused this API key…" | Wrong or stopped API key. Check **Setup** → **API keys** in your partner portal. Don't save the entry with it: a saved entry is used. |
-| "server entry #N …: QuantumByte refused this entry's API key" | Fix the key on that entry, or switch it off (Disable). |
 | "QuantumByte has paused this partnership. Contact QuantumByte." | Contact QuantumByte. |
 | "Not enough QuantumByte balance…" / "…credit…" | Top up or pay what you owe, then Retry. |
 | "Your QuantumByte statement for … was due on …" | Pay the statement in the partner portal, then Retry. |

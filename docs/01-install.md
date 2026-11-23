@@ -173,8 +173,8 @@ Then go through [Before you start](#before-you-start) yourself.
 
 **Things to note**
 
-- Your customer publishes their app in QuantumByte, downloads two files
-  and runs them on a server they choose. See
+- Your customer publishes their app in QuantumByte, downloads its Docker
+  Compose files and runs them on a server they choose. See
   [Publishing](02-publishing.md).
 - If you already sell hosting, put your hosting plan and the AI Builder
   product in a WHMCS **Product Bundle** (Configuration → System Settings →
@@ -229,11 +229,12 @@ portal's ledger names the pack.
    Successful" on the service, status **Active**.
 3. Client area → the service page → **Open AI Builder**. The customer lands
    in the AI Builder, signed in, with the package's credits.
-4. Build a small app, press **Publish**. QuantumByte builds the app's
-   image, then offers a `docker-compose.yml` and an `.env` to download.
+4. Build a small app, press **Publish**. When the build is done, open
+   **App Config** and download the files as a new install.
 5. Partner portal → **Customer apps**: the app is listed.
-6. On any test server with Docker, put both files in one folder and run
-   `docker compose up -d`. Open the app.
+6. On any test server with Docker, follow **How to install and update** in
+   App Config. Then `curl http://127.0.0.1:3000` on the server: the app
+   answers.
 
 **Things to note**
 

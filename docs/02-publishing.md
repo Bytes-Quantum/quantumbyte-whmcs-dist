@@ -16,18 +16,33 @@ nothing of the server.
 1. Builds the app in AI Builder, signed in from your client area with
    **Open AI Builder**.
 2. Presses **Publish**. QuantumByte makes the app into a Docker image.
-3. In QuantumByte, downloads two files: `docker-compose.yml` and `.env`.
-4. Puts both files in one folder on a server that has Docker, and starts
-   the app there. The server can be at any provider, yours or not.
-5. Sets up their own domain and DNS for that server. QuantumByte gives the
-   app no address and does not check the domain or the server. Your WHMCS
-   writes and shows no DNS for the app.
+3. In **App Config**, chooses the database (**Included MongoDB** or **My own
+   MongoDB**), ticks **This is a new install** and presses **Download**. The
+   download asks for a code from an authenticator app. A new install has
+   four files: `docker-compose.yml`, `.env`, `content-apply.js` and
+   `local.env`.
+4. Puts the four files in one folder on a server with Docker and the
+   Compose plugin, at any provider, yours or not. Runs
+   `chmod 600 .env local.env`, logs in to QuantumByte's registry with the
+   `docker login` line App Config shows (the download key is the password),
+   then runs `docker compose up -d`.
+5. The app answers on `127.0.0.1:3000`. The customer puts a web server
+   (Caddy, nginx or Apache) in front of it, points their domain at the
+   server and opens ports 80 and 443. **How to install and update** in App
+   Config gives the lines to paste. QuantumByte gives the app no address
+   and does not check the domain or the server. Your WHMCS writes and shows
+   no DNS for the app.
 
-The `.env` file holds the customer's key for downloading the app's image and
-content. The customer keeps it private.
+`local.env` holds the customer's download key and, with the included
+MongoDB, the database password. An update never replaces it. `.env` holds
+the release and the app's settings. Both stay private.
 
-Every new release works the same way: the customer publishes, then runs the
-new files on their server.
+To release a new version, the customer publishes again, downloads again
+with **This is a new install** left off, replaces the files in the folder,
+then runs `docker compose pull && docker compose up -d`.
+
+The server needs outbound HTTPS (443) to QuantumByte's registry and API,
+named in the downloaded `.env`, on install and on every update.
 
 ## What you control
 
@@ -75,13 +90,18 @@ Paste this when a customer asks how to run their app.
 >
 > 1. Open **Open AI Builder** in our client area and press **Publish** on
 >    your app.
-> 2. Download `docker-compose.yml` and `.env`.
-> 3. Copy both files to one folder on your server. The server needs Docker.
-> 4. In that folder, run `docker compose up -d`.
-> 5. Point your domain at your server with your own DNS provider.
+> 2. When the build is done, open **App Config**, tick **This is a new
+>    install** and press **Download**.
+> 3. Put the four files in one folder on your server. The server needs
+>    Docker with the Compose plugin.
+> 4. Follow **How to install and update** in App Config: log in to the
+>    registry with your download key, then run `docker compose up -d`.
+> 5. Put a web server in front of the app and point your domain at your
+>    server. The same page gives the lines to paste.
 >
-> We cannot see or reach your server. To update the app, publish again and
-> run the new files.
+> We cannot see or reach your server. To update the app, publish again,
+> download again with the new-install box off, replace the files and run
+> `docker compose pull && docker compose up -d`.
 
 **Bahasa Indonesia**
 
@@ -89,10 +109,17 @@ Paste this when a customer asks how to run their app.
 >
 > 1. Buka **Open AI Builder** di area klien kami lalu tekan
 >    **Publikasikan** di aplikasi Anda.
-> 2. Unduh `docker-compose.yml` dan `.env`.
-> 3. Salin kedua berkas ke satu folder di server Anda. Server perlu Docker.
-> 4. Di folder itu, jalankan `docker compose up -d`.
-> 5. Arahkan domain Anda ke server dengan penyedia DNS Anda sendiri.
+> 2. Setelah build selesai, buka **App Config**, centang **Ini pemasangan
+>    baru** lalu tekan **Unduh**.
+> 3. Taruh keempat file di satu folder di server Anda. Server perlu Docker
+>    dengan Compose plugin.
+> 4. Ikuti **Cara memasang dan memperbarui** di App Config: login ke
+>    registry dengan kunci unduhan Anda, lalu jalankan
+>    `docker compose up -d`.
+> 5. Pasang web server di depan aplikasi dan arahkan domain Anda ke server.
+>    Halaman yang sama memberi baris yang tinggal ditempel.
 >
 > Kami tidak bisa melihat atau menjangkau server Anda. Untuk memperbarui
-> aplikasi, publikasikan lagi lalu jalankan berkas yang baru.
+> aplikasi, publikasikan lagi, unduh lagi tanpa mencentang pemasangan baru,
+> ganti file-nya, lalu jalankan
+> `docker compose pull && docker compose up -d`.
