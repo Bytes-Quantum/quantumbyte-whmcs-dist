@@ -1,8 +1,9 @@
 # Upgrading to 1.6: you resell plans and credits
 
 Version 1.6 follows a change at QuantumByte. A customer's app is published
-as a Docker image. In QuantumByte the customer downloads a
-`docker-compose.yml` and an `.env`, and runs them on any server themselves.
+as a Docker image. In QuantumByte the customer downloads its Docker Compose
+files and runs them on any server themselves
+([Publishing](02-publishing.md)).
 QuantumByte keeps no list of servers, checks no domain and sees nothing of
 the server.
 
